@@ -1,16 +1,21 @@
 {
   "name": "blog-backend",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "app.js",
-    "dev": "nodemon app.js"
+    "start": "node server.js",
+    "dev": "nodemon server.js"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "Node",
+    "js",
+    "Express",
+    "js",
+    "Mongodb"
+  ],
+  "author": "Dixon Tan",
   "license": "ISC",
-  "description": "",
   "dependencies": {
     "bcrypt": "^5.1.1",
     "connect-mongo": "^5.1.0",
@@ -21,10 +26,14 @@
     "express-ejs-layouts": "^2.5.1",
     "express-session": "^1.18.0",
     "jsonwebtoken": "^9.0.2",
+    "lodash": "^4.17.21",
     "method-override": "^3.0.0",
+    "mongodb": "^6.8.0",
     "mongoose": "^8.5.2"
   },
   "devDependencies": {
+    "@types/node": "^22.3.0",
     "nodemon": "^3.1.4"
-  }
+  },
+  "description": "Blog API using nodejs and mongodb"
 }
