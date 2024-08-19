@@ -14,7 +14,7 @@ const app = express();
 app.use('/api/v1/users', userRouter) // users route
 app.use('/api/v1/posts', postRouter) // posts route
 app.use('/api/v1/comments', commentRouter) // comments route
-app.use('/api/v1/category', categoryRouter) // category route
+app.use('/api/v1/categories', categoryRouter) // category route
 
 // Error handlers
 
