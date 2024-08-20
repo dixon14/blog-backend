@@ -8,9 +8,10 @@ require('dotenv').config();
 require('./config/dbConnect');
 const app = express();
 
-// middlewares
+app.use(express.json()) // parse incoming payload
 
-// routes
+// middlewares
+// routes 
 app.use('/api/v1/users', userRouter) // users route
 app.use('/api/v1/posts', postRouter) // posts route
 app.use('/api/v1/comments', commentRouter) // comments route

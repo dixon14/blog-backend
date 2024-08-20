@@ -1,9 +1,34 @@
+const bcrypt = require("bcryptjs");
+const User = require("../../models/User/User");
+const { generateToken } = require("../../utils/token");
+
 // Create user
 const userRegisterHandler = async(req, res) => {
+    const {firstName, lastName, username, email, password} = req.body;
     try {
+        // Check if email exists
+        const userFound = await User.findOne({email});
+        if (userFound) {
+            return res.status(400).json({
+                error: "User already exist"
+            })
+        }
+
+        // Hashing password
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
+         
+        const user = await User.create({
+            firstName, 
+            lastName, 
+            username, 
+            email, 
+            password: hashedPassword,
+        });
+
         res.json({
             status: "success",
-            data: 'user registered',
+            data: user,
         });
     } catch (error) {
         res.json(error.message)
@@ -11,23 +36,49 @@ const userRegisterHandler = async(req, res) => {
 }
 
 // User login
+// Generate JWT token for subsequent requests
 const userLoginHandler = async (req, res) => {
+    const { email, password } = req.body;
     try {
+        // check email exist
+        const user = await User.findOne({email});
+        if (!user) {
+            return res.status(400).json({
+                msg: "Invalid login credentials"
+            })
+        }
+
+        // verify password
+        const isPasswordMatched = await bcrypt.compare(password, user.password);
+        if (!isPasswordMatched) {
+            return res.status(400).json({
+                msg: "Invalid login credentials"
+            })
+        }
+
         res.json({
             status: "success",
-            data: 'user login',
+            data: {
+                firstName: user.firstName,
+                lastName: user.lastName,
+                email: user.email,
+                isAdmin: user.isAdmin,
+                token: generateToken(user._id),
+            },
         });
     } catch (error) {
         res.json(error.message)
     }
 }
 
-// Get a single user 
+// Get user profile
+// User can only get their own profile
 const getUserHandler = async (req, res) => {
     try {
+        const user = await User.findById(req.userAuth)
         res.json({
             status: "success",
-            data: 'user details',
+            data: user,
         });
     } catch (error) {
         res.json(error.message)
