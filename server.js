@@ -3,6 +3,7 @@ const { userRouter } = require("./routes/users/userRoutes");
 const postRouter = require("./routes/posts/postRoutes");
 const commentRouter = require("./routes/comments/commentRoutes");
 const categoryRouter = require("./routes/categories/categoryRoutes");
+const { errorHandler, notFoundErrHandler } = require("./middlewares/error");
 
 require('dotenv').config();
 require('./config/dbConnect');
@@ -17,7 +18,9 @@ app.use('/api/v1/posts', postRouter) // posts route
 app.use('/api/v1/comments', commentRouter) // comments route
 app.use('/api/v1/categories', categoryRouter) // category route
 
-// Error handlers
+// Error handler
+app.use(errorHandler);
+app.use("*", notFoundErrHandler);
 
 // Listen to server
 const PORT = process.env.PORT || 9000;
