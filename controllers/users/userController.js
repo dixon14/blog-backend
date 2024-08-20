@@ -1,17 +1,16 @@
 const bcrypt = require("bcryptjs");
 const User = require("../../models/User/User");
 const { generateToken } = require("../../utils/token");
+const { AppErr } = require("../../utils/error");
 
 // Create user
-const userRegisterHandler = async(req, res) => {
+const userRegisterHandler = async(req, res, next) => {
     const {firstName, lastName, username, email, password} = req.body;
     try {
         // Check if email exists
         const userFound = await User.findOne({email});
         if (userFound) {
-            return res.status(400).json({
-                error: "User already exist"
-            })
+            throw new AppErr(500, "User already exists");
         }
 
         // Hashing password
@@ -31,7 +30,7 @@ const userRegisterHandler = async(req, res) => {
             data: user,
         });
     } catch (error) {
-        res.json(error.message)
+        next(error);
     }
 }
 
@@ -43,17 +42,13 @@ const userLoginHandler = async (req, res) => {
         // check email exist
         const user = await User.findOne({email});
         if (!user) {
-            return res.status(400).json({
-                msg: "Invalid login credentials"
-            })
+            throw new AppErr(500, "Invalid login credentials");
         }
 
         // verify password
         const isPasswordMatched = await bcrypt.compare(password, user.password);
         if (!isPasswordMatched) {
-            return res.status(400).json({
-                msg: "Invalid login credentials"
-            })
+            throw new AppErr(500, "Invalid login credentials");
         }
 
         res.json({
@@ -67,7 +62,7 @@ const userLoginHandler = async (req, res) => {
             },
         });
     } catch (error) {
-        res.json(error.message)
+        next(error);
     }
 }
 
@@ -81,7 +76,7 @@ const getUserHandler = async (req, res) => {
             data: user,
         });
     } catch (error) {
-        res.json(error.message)
+        next(error);
     }
 }
 
@@ -93,7 +88,7 @@ const getAllUsersHandler = async (req, res) => {
             data: 'all user details',
         });
     } catch (error) {
-        res.json(error.message)
+        next(error);
     }
 }
 
@@ -105,7 +100,7 @@ const deleteUserHandler = async (req, res) => {
             data: 'user deleted',
         });
     } catch (error) {
-        res.json(error.message)
+        next(error);
     }
 }
 
@@ -117,7 +112,7 @@ const updateUserHandler = async (req, res) => {
             data: 'user updated',
         });
     } catch (error) {
-        res.json(error.message)
+        next(error);
     }
 }
 
