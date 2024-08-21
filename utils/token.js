@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+require('dotenv').config();
 
 function generateToken(id){
     return jwt.sign({id}, process.env.JWT_KEY, {expiresIn: "1d"})
@@ -6,14 +7,17 @@ function generateToken(id){
 
 
 function getTokenFromHeader(req) {
-    const headers = req.headers;
-    const token = headers["authorization"].split(" ")[1];
-    const isBearerToken =  headers["authorization"].toLowerCase().startsWith("bearer");
-
-    if (token == undefined || !isBearerToken ) {
+    const authHeaders = req.headers["authorization"];
+    if (authHeaders == undefined ) {
         return null
     }
-    return token;
+
+    const isBearerToken =  authHeaders.toLowerCase().startsWith("bearer");
+    if (!isBearerToken) {
+        return null
+    }
+
+    return authHeaders.split(" ")[1];
 }
 
 function verifyToken(token) {

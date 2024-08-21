@@ -36,19 +36,19 @@ const userRegisterHandler = async(req, res, next) => {
 
 // User login
 // Generate JWT token for subsequent requests
-const userLoginHandler = async (req, res) => {
+const userLoginHandler = async (req, res, next) => {
     const { email, password } = req.body;
     try {
         // check email exist
         const user = await User.findOne({email});
         if (!user) {
-            throw new AppErr(500, "Invalid login credentials");
+            throw new AppErr(403, "Invalid login credentials");
         }
 
         // verify password
         const isPasswordMatched = await bcrypt.compare(password, user.password);
         if (!isPasswordMatched) {
-            throw new AppErr(500, "Invalid login credentials");
+            throw new AppErr(403, "Invalid login credentials");
         }
 
         res.json({
@@ -68,7 +68,7 @@ const userLoginHandler = async (req, res) => {
 
 // Get user profile
 // User can only get their own profile
-const getUserHandler = async (req, res) => {
+const getUserHandler = async (req, res, next) => {
     try {
         const user = await User.findById(req.userAuth)
         res.json({
@@ -81,7 +81,7 @@ const getUserHandler = async (req, res) => {
 }
 
 // Get all users
-const getAllUsersHandler = async (req, res) => {
+const getAllUsersHandler = async (req, res, next) => {
     try {
         res.json({
             status: "success",
@@ -93,7 +93,7 @@ const getAllUsersHandler = async (req, res) => {
 }
 
 // Delete a user
-const deleteUserHandler = async (req, res) => {
+const deleteUserHandler = async (req, res, next) => {
     try {
         res.json({
             status: "success",
@@ -104,13 +104,50 @@ const deleteUserHandler = async (req, res) => {
     }
 }
 
-// Update a user info
-const updateUserHandler = async (req, res) => {
+// Update a user info  
+const updateUserHandler = async (req, res, next) => {
     try {
         res.json({
             status: "success",
             data: 'user updated',
         });
+    } catch (error) {
+        next(error);
+    }
+}
+
+// Profile photo upload 
+const profilePhotoUploadHandler = async (req, res, next) => {
+    try {
+        // Find user to be updated
+        const user = User.findById(req.userAuth);
+        if (!user) {
+            throw new AppErr(403, "Invalid login credentials");
+        }
+
+        if (user.isBlocked) {
+            throw new AppErr(403, "Action not allowed")
+        }
+
+        // Check if user is updating their photo
+        if (req.file) {
+            await User.findByIdAndUpdate(req.userAuth, 
+            {
+                $set: 
+                {
+                    profilePhoto: req.file.path,
+                }
+            },
+            {
+                new: true,
+            }
+            );
+
+            res.json({
+                status: "success",
+                data: 'Profile photo uploaded',
+            });
+        }
     } catch (error) {
         next(error);
     }
@@ -122,5 +159,6 @@ module.exports = {
     getUserHandler,
     getAllUsersHandler,
     deleteUserHandler,
-    updateUserHandler
+    updateUserHandler,
+    profilePhotoUploadHandler
 }
