@@ -17,6 +17,7 @@ const authHandler = (req, res, next) => {
     
     // save user into req object
     req.userAuth = decoded.id
+    next()
     } catch (error) {
         next(error);
     }
