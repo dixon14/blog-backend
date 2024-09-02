@@ -80,6 +80,34 @@ const getUserHandler = async (req, res, next) => {
     }
 }
 
+// Who viewed my profile
+const whoViewedMyProfileHandler = async (req, res, next) => {
+    try {
+        // Find the original user & who viewed
+        const user = await User.findById(req.params.id)
+        const whoViewed = await User.findById(req.userAuth)
+
+        if (user && whoViewed) {
+            const isUserAlreadyViewed = user.viewers.find(
+                viewer => viewer.toString() === whoViewed.toString()
+            );
+            
+            if (!isUserAlreadyViewed) {
+                user.viewers.push(whoViewed._id)
+            }
+
+            await user.save();
+            res.json({
+                status: "success",
+                data: "Successfully viewed the profile "
+            }
+            )
+        }
+    } catch (error) {
+        next(error);
+    }
+}
+
 // Get all users
 const getAllUsersHandler = async (req, res, next) => {
     try {
@@ -153,6 +181,77 @@ const profilePhotoUploadHandler = async (req, res, next) => {
     }
 }
 
+// Following
+const followingHandler = async (req, res, next) => {
+    try {
+        // Find the requesting user & user to follow
+        const userLoggedIn = await User.findById(req.userAuth);
+        const userToFollow = await User.findById(req.params.id);
+
+        if (userLoggedIn && userToFollow) {
+            const isAlreadyFollowed = userToFollow.followers.find(
+                follower => follower.toString() === userLoggedIn._id.toString()
+            );
+            
+            if (!isAlreadyFollowed) {
+                userToFollow.followers.push(userLoggedIn._id) // add follower id
+                userLoggedIn.following.push(userToFollow._id) // add following id
+
+                await userToFollow.save();
+                await userLoggedIn.save();
+
+                res.json({
+                    status: "success",
+                    data: `Successfully followed user ${userToFollow._id}`
+                }
+                )
+            } else {
+                throw new AppErr(500, "You already followed this user")
+            }
+        }
+    } catch (error) {
+        next(error);
+    }
+}
+
+// Unfollowing user
+const unfollowingHandler = async(req, res, next) => {
+    try {
+        const userToUnfollow = await User.findById(req.params.id);
+        const userLoggedIn = await User.findById(req.userAuth);
+
+        if (userToUnfollow && userLoggedIn) {
+            //  Check if the userLoggedIn is already in the userToUnfollow list
+            const isUserAlreadyFollowed = userToUnfollow.followers.find(
+                follower => follower.toString() === userLoggedIn._id.toString()
+            )
+
+            if (!isUserAlreadyFollowed) {
+                throw new AppErr(500, "You have not followed this user")
+            } else {
+                // Remove userLoggedin from the userToUnfollow's followers
+                userToUnfollow.followers = userToUnfollow.followers.filter(
+                    follower => follower.toString() !== userLoggedIn._id.toString()
+                )
+
+                // Remove userToUnfollow from the userLoggedIn's following
+                userLoggedIn.following = userLoggedIn.following.filter(
+                    following => following.toString() !== userToUnfollow._id.toString()
+                );
+                await userToUnfollow.save()
+                await userLoggedIn.save()
+                
+                res.json( {
+                    status: "success",
+                    data: "You have successfully unfollowed the user"
+                })
+            }
+        }
+    } catch (error) {
+        next(error);
+    }
+}
+
 module.exports = {
     userRegisterHandler,
     userLoginHandler,
@@ -160,5 +259,8 @@ module.exports = {
     getAllUsersHandler,
     deleteUserHandler,
     updateUserHandler,
-    profilePhotoUploadHandler
+    profilePhotoUploadHandler,
+    whoViewedMyProfileHandler,
+    followingHandler,
+    unfollowingHandler
 }
