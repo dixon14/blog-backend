@@ -253,7 +253,7 @@ const unfollowingHandler = async(req, res, next) => {
 }
 
 
-// Admin can block user
+// Blocking certain user (Only admin can do it)
 const blockUserHandler = async (req, res, next) => {
     try {
         // Find the userToBlock

@@ -15,9 +15,9 @@ userRouter.get('/profile-viewers/:id', authHandler, whoViewedMyProfileHandler)
 userRouter.get('/following/:id', authHandler, followingHandler)
 userRouter.get('/unfollow/:id', authHandler, unfollowingHandler)
 userRouter.get('/profile', authHandler, getUserHandler)
-userRouter.get('/block/:id', adminAuthHandler, blockUserHandler)
 userRouter.delete('/:id', deleteUserHandler)
 userRouter.put('/:id', updateUserHandler)
+userRouter.put('/block/:id', adminAuthHandler, blockUserHandler)
 
 module.exports = {
     userRouter
