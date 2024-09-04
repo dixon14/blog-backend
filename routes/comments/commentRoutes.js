@@ -1,5 +1,5 @@
 const express = require('express');
-const { createCommentHandler, getCommentHandler, getAllCommentsHandler, deleteCommentHandler, updateCommentHandler } = require('../../controllers/comments/commentController');
+const { createCommentHandler, getCommentHandler, getAllCommentsHandler, deleteCommentHandler, updateCommentHandler } = require('../../controllers/comments/comment_controller');
 
 const commentRouter = express.Router();
 
