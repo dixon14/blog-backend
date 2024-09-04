@@ -86,27 +86,21 @@ const userSchema = new mongoose.Schema({
 },
     {
         timestamps: true,
+        toJSON: { virtuals: true }
     }
 );
 
+
+userSchema.virtual("fullName").get(function () {
+   return `${this.firstName} ${this.lastName}`
+});
+
+userSchema.virtual("postCount").get(function() {
+    return this.posts.length
+});
+
 // Compile user model
 const User =  mongoose.model('User', userSchema);
-
-// userSchema.pre('save', function(next) {
-//     let user = this;
-
-//     // do nothing if the password is not modified
-//     if (!user.isModified('password')) return next();
-
-//     // hash the password using our new salt
-//     bcrypt.hash(user.password, 10, (err, hash) => {
-//         if (err) return next(err);
-
-//         // overwrite the plain text password with the hashed one
-//         user.password = hash
-//         next();
-//     })
-// })
 
 
 module.exports = User;
