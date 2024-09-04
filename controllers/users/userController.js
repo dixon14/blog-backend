@@ -271,6 +271,25 @@ const blockUserHandler = async (req, res, next) => {
     }
 }
 
+// Unblock user
+const unblockUserHandler = async (req, res, next) => {
+    try {
+        // Find the userToBlock
+        const userToBlock = await User.findByIdAndUpdate(req.params.id, {isBlocked: false});
+        if (!userToBlock) {
+            throw new AppErr(500, "Unable to find user")
+        }
+
+        res.json({
+            status: "success",
+            data: "You have successfully unblocked the user"
+        })
+    } catch (error) {
+        next(error);
+    }
+}
+
+
 module.exports = {
     userRegisterHandler,
     userLoginHandler,
@@ -282,5 +301,6 @@ module.exports = {
     whoViewedMyProfileHandler,
     followingHandler,
     unfollowingHandler,
-    blockUserHandler
+    blockUserHandler,
+    unblockUserHandler
 }
