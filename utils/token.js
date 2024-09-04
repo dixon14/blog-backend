@@ -21,7 +21,7 @@ function getTokenFromHeader(req) {
 }
 
 function verifyToken(token) {
-    return jwt.verify(token, process.env.JWT_KEY, (err, decoded)=> {
+    return jwt.verify(token, process.env.JWT_KEY, (err, decoded) => {
         if (err) {
             return false
         } else {
