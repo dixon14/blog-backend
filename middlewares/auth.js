@@ -24,7 +24,7 @@ const authHandler = (req, res, next) => {
     }
 }
 
-const adminAuthHandler = (req, res, next) => {
+const adminAuthHandler = async (req, res, next) => {
     try {
         //  get token from header
         const token = getTokenFromHeader(req);
@@ -39,14 +39,11 @@ const adminAuthHandler = (req, res, next) => {
         }
         
         // Check if user is admin
-        User.findById(decoded.id)
-        .then(user => {
-            if (!user.isAdmin) {
-                throw new AppErr(401, "Invalid permission")
-            }
-            next();
-        })
-        .catch(err => next(err))
+        const user = await User.findById(decoded.id)
+        if (!user.isAdmin) {
+            throw new AppErr(401, "Invalid permission")
+        }
+        next()
     } catch (error) {
         next(error);
     }
