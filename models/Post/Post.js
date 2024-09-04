@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const { readingTime } = require('../utils/utils')
+const { calculateReadingTime } = require('../../utils/post');
 
 const postSchema = new mongoose.Schema(
     {
@@ -11,7 +11,7 @@ const postSchema = new mongoose.Schema(
         },
         description: {
             type: String,
-            required: [true, 'Post Title is required'],
+            required: [true, 'Post Description is required'],
         },
         category: {
             type: mongoose.Schema.Types.ObjectId,
@@ -57,18 +57,17 @@ const postSchema = new mongoose.Schema(
     }
 );
 
-// // calculate reading time before saving document
-// postSchema.pre('save', function(next) {
-//     let post = this
+// calculate reading time before saving document
+postSchema.pre('save', function(next) {
+   let post = this;
 
-//     // do nothing if the post body is unchanged
-//     if (!post.isModified('body')) return next()
+   if (!post.isModified('body')) return next();
 
-//     const timeToRead = readingTime(this.body)
+   const timeToRead = calculateReadingTime(post);
 
-//     post.reading_time = timeToRead
-//     next()
-// })
+   article.reading_time = timeToRead;
+   next();
+})
 
 // postSchema.set('toJSON', {
 //     transform: (document, returnedObject) => {
