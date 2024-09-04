@@ -41,7 +41,7 @@ const adminAuthHandler = async (req, res, next) => {
         // Check if user is admin
         const user = await User.findById(decoded.id)
         if (!user.isAdmin) {
-            throw new AppErr(401, "Invalid permission")
+            throw new AppErr(401, "Insufficient permission")
         }
         next()
     } catch (error) {
