@@ -1,6 +1,6 @@
 const express = require('express');
-const { userRegisterHandler, userLoginHandler, getUserHandler, getAllUsersHandler, deleteUserHandler, profilePhotoUploadHandler, updateUserHandler, whoViewedMyProfileHandler, followingHandler, unfollowingHandler } = require('../../controllers/users/userController');
-const { authHandler } = require('../../middlewares/auth');
+const { userRegisterHandler, userLoginHandler, getUserHandler, getAllUsersHandler, deleteUserHandler, profilePhotoUploadHandler, updateUserHandler, whoViewedMyProfileHandler, followingHandler, unfollowingHandler, blockUserHandler } = require('../../controllers/users/userController');
+const { authHandler, adminAuthHandler } = require('../../middlewares/auth');
 const multer = require('multer');
 const storage = require('../../config/cloudinary');
 const upload = multer({ storage });
@@ -15,6 +15,7 @@ userRouter.get('/profile-viewers/:id', authHandler, whoViewedMyProfileHandler)
 userRouter.get('/following/:id', authHandler, followingHandler)
 userRouter.get('/unfollow/:id', authHandler, unfollowingHandler)
 userRouter.get('/profile', authHandler, getUserHandler)
+userRouter.get('/block/:id', adminAuthHandler, blockUserHandler)
 userRouter.delete('/:id', deleteUserHandler)
 userRouter.put('/:id', updateUserHandler)
 

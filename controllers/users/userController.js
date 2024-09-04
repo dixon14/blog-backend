@@ -240,13 +240,32 @@ const unfollowingHandler = async(req, res, next) => {
                 );
                 await userToUnfollow.save()
                 await userLoggedIn.save()
-                
+
                 res.json( {
                     status: "success",
                     data: "You have successfully unfollowed the user"
                 })
             }
         }
+    } catch (error) {
+        next(error);
+    }
+}
+
+
+// Admin can block user
+const blockUserHandler = async (req, res, next) => {
+    try {
+        // Find the userToBlock
+        const userToBlock = await User.findByIdAndUpdate(req.params.id, {isBlocked: true});
+        if (!userToBlock) {
+            throw new AppErr(500, "Unable to find user")
+        }
+
+        res.json({
+            status: "success",
+            data: "You have successfully blocked the user"
+        })
     } catch (error) {
         next(error);
     }
@@ -262,5 +281,6 @@ module.exports = {
     profilePhotoUploadHandler,
     whoViewedMyProfileHandler,
     followingHandler,
-    unfollowingHandler
+    unfollowingHandler,
+    blockUserHandler
 }
