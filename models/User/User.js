@@ -99,6 +99,10 @@ userSchema.virtual("postCount").get(function() {
     return this.posts.length
 });
 
+userSchema.virtual ("followersCount").get(function() {
+    return this.followers.length
+});
+
 // Compile user model
 const User =  mongoose.model('User', userSchema);
 
