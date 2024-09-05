@@ -3,10 +3,10 @@ const createCategoryHandler = async (req, res) => {
     try {
         res.json({
             status: "success",
-            data: 'category created',
+            data: "category created",
         });
     } catch (error) {
-        res.json(error.message)
+        res.json(error.message);
     }
 };
 
@@ -14,20 +14,18 @@ const createCategoryHandler = async (req, res) => {
 const getCategoryHandler = async (req, res) => {
     try {
     } catch (error) {
-        res.json(error.message)
+        res.json(error.message);
     }
-}
+};
 
 // Get all categories
 const getAllCategoriesHandler = async (req, res) => {
     try {
-        res.json({
-
-        })
+        res.json({});
     } catch (error) {
-        res.json(error.message)
+        res.json(error.message);
     }
-}
+};
 
 // Delete a cateogry
 const deleteCategoryHandler = async (req, res) => {
@@ -37,25 +35,23 @@ const deleteCategoryHandler = async (req, res) => {
             data: "delete category",
         });
     } catch (error) {
-        res.json(error.message)
+        res.json(error.message);
     }
-}
+};
 
 // UpdateCategory
 const updateCategoryHandler = async (req, res) => {
     try {
-        res.json({
-            
-        });
+        res.json({});
     } catch (error) {
-        res.json(error.message)
+        res.json(error.message);
     }
-}
+};
 
 module.exports = {
     createCategoryHandler,
     getCategoryHandler,
     getAllCategoriesHandler,
     deleteCategoryHandler,
-    updateCategoryHandler
-}
+    updateCategoryHandler,
+};
