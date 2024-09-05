@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const Post = require("../Post/Post");
 
 // create schema
 const userSchema = new mongoose.Schema(
@@ -88,6 +89,23 @@ const userSchema = new mongoose.Schema(
         toJSON: { virtuals: true },
     }
 );
+
+// Pre hooks - to determine user's last post date
+userSchema.pre("findOne", async function (next) {
+    const userID = this._conditions._id;
+
+    const posts = await Post.find({ user: userID });
+    const lastPost = posts[posts.length - 1];
+
+    // get the latest post date
+    const lastPostDate = new Date(lastPost.createdAt);
+    const lastPostDateStr = lastPostDate.toDateString();
+
+    userSchema.virtual("lastPostDate").get(function () {
+        return lastPostDateStr;
+    });
+    next();
+});
 
 userSchema.virtual("fullName").get(function () {
     return `${this.firstName} ${this.lastName}`;
