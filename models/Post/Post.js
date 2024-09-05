@@ -16,7 +16,7 @@ const postSchema = new mongoose.Schema(
         category: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Category",
-            required: [true, "Post Category is required"],
+            // required: [true, "Post Category is required"],
         },
         numViews: [
             {
@@ -37,7 +37,7 @@ const postSchema = new mongoose.Schema(
         },
         photo: {
             type: String,
-            required: [true, "Post Image is required"],
+            // required: [true, "Post Image is required"],
         },
         state: {
             type: String,
@@ -50,7 +50,6 @@ const postSchema = new mongoose.Schema(
         },
         reading_time: Number,
         tags: [String],
-        body: String,
     },
     {
         timestamps: true,
@@ -61,11 +60,11 @@ const postSchema = new mongoose.Schema(
 postSchema.pre("save", function (next) {
     let post = this;
 
-    if (!post.isModified("body")) return next();
+    if (!post.isModified("description")) return next();
 
-    const timeToRead = calculateReadingTime(post);
+    const timeToRead = calculateReadingTime(post.description);
 
-    article.reading_time = timeToRead;
+    post.reading_time = timeToRead;
     next();
 });
 
