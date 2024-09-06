@@ -70,7 +70,9 @@ const userLoginHandler = async (req, res, next) => {
 // User can only get their own profile
 const getUserHandler = async (req, res, next) => {
     try {
-        const user = await User.findById(req.userAuth).populate("posts");
+        const user = await User.findById(req.userAuth).populate({
+            path: "posts",
+        });
         res.json({
             status: "success",
             data: user,
