@@ -91,10 +91,11 @@ const userSchema = new mongoose.Schema(
 );
 
 // Pre hooks - to determine user's last post date
-userSchema.pre(/^find/, async function (next) {
+userSchema.pre("find", async function (next) {
+    console.log(this);
     const userID = this._conditions._id;
 
-    const posts = await Post.find({ author : userID });
+    const posts = await Post.find({ author: userID });
     const lastPost = posts[posts.length - 1];
 
     // get the latest post date

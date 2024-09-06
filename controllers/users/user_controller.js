@@ -135,10 +135,21 @@ const deleteUserHandler = async (req, res, next) => {
 
 // Update a user info
 const updateUserHandler = async (req, res, next) => {
+    const { firstName, lastName, username } = req.body;
     try {
+        const user = await User.findByIdAndUpdate(
+            req.userAuth,
+            {
+                lastName,
+                firstName,
+                username,
+            },
+            { new: true, runValidators: true }
+        );
+
         res.json({
             status: "success",
-            data: "user updated",
+            data: user,
         });
     } catch (error) {
         next(error);
